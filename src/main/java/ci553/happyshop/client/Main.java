@@ -1,7 +1,7 @@
 package ci553.happyshop.client;
 
 import ci553.happyshop.client.customer.*;
-
+import ci553.happyshop.authentication.*;
 import ci553.happyshop.client.emergency.EmergencyExit;
 import ci553.happyshop.client.orderTracker.OrderTracker;
 import ci553.happyshop.client.picker.PickerController;
@@ -33,6 +33,8 @@ import java.io.IOException;
  * @author  Shine Shan University of Brighton
  */
 
+
+
 public class Main extends Application {
 
     public static void main(String[] args) {
@@ -42,22 +44,32 @@ public class Main extends Application {
     //starts the system
     @Override
     public void start(Stage window) throws IOException {
-        startCustomerClient();
-        startPickerClient();
-        startOrderTracker();
+        // Show login screen first
+        LoginView loginView = new LoginView();
+        Stage loginStage = new Stage();
+        loginView.start(loginStage, user -> {
+            System.out.println("Logged in as: " + user.getUsername() + " (" + user.getUserType() + ")");
 
-        startCustomerClient();
-        startPickerClient();
-        startOrderTracker();
+            try {
+                startCustomerClient();
+                startPickerClient();
+                startOrderTracker();
 
-        // Initializes the order map for the OrderHub. This must be called after starting the observer clients
-        // (such as OrderTracker and Picker clients) to ensure they are properly registered for receiving updates.
-        initializeOrderMap();
+                startCustomerClient();
+                startPickerClient();
+                startOrderTracker();
 
-        startWarehouseClient();
-        startWarehouseClient();
+                // Initialize order map
+                initializeOrderMap();
 
-        startEmergencyExit();
+                startWarehouseClient();
+                startWarehouseClient();
+
+                startEmergencyExit();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /** The customer GUI -search prodduct, add to trolley, cancel/submit trolley, view receipt

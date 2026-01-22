@@ -12,8 +12,6 @@ import java.sql.SQLException;
  * Singleton
  * Only one instance exists throughout application lifecycle
  * Ensures consistent authentication state across all clients
- *
- * @author [Your Name]
  */
 public class AuthenticationManager {
 
@@ -26,11 +24,21 @@ public class AuthenticationManager {
      * Singleton pattern. use getInstance() instead
      */
     private AuthenticationManager() {
+        System.out.println("🔍 Initializing AuthenticationManager...");
         try {
+            System.out.println("🔍 Database URL: " + DatabaseRWFactory.dbURL);
             Connection connection = DriverManager.getConnection(DatabaseRWFactory.dbURL);
+            System.out.println("✅ Database connection successful!");
+
             this.userDAO = new UserDAO(connection);
+            System.out.println("✅ UserDAO created successfully!");
+
         } catch (SQLException e) {
-            System.err.println("Failed to initialise AuthenticationManager: " + e.getMessage());
+            System.err.println("❌ Failed to initialise AuthenticationManager: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("❌ Unexpected error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

@@ -10,8 +10,6 @@ import java.sql.*;
  * Makes code testable (can create MockUserDAO for testing)
  * Easy to switch databases (just change this class)
  * Follows Single Responsibility Principle
- *
- * @author [Your Name]
  */
 public class UserDAO {
 

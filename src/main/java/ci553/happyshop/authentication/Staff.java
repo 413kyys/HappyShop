@@ -6,8 +6,6 @@ package ci553.happyshop.authentication;
  * Manager: Full access to all systems
  * Picker: Order fulfilment only
  * Warehouse: Stock management only
- *
- * @author [Your Name]
  */
 public class Staff extends User {
 
