@@ -35,7 +35,7 @@ public class SetDatabase {
     private static Path imageWorkingFolderPath = StorageLocation.imageFolderPath;
     private static Path imageBackupFolderPath = StorageLocation.imageResetFolderPath;
 
-    private String[] tables = {"ProductTable"};
+    private String[] tables = {"ProductTable", "UserTable", "CustomerTable", "StaffTable"};
     // Currently only "ProductTable" exists, but using an array allows easy expansion
     // if more tables need to be processed in the future without changing the logic structure.
 
@@ -102,6 +102,47 @@ public class SetDatabase {
                 "INSERT INTO ProductTable VALUES('0010', 'USB4 drive', 9.99, '0010.jpg',100)",
                 "INSERT INTO ProductTable VALUES('0011', 'USB5 drive', 10.99, '0011.jpg',100)",
                 "INSERT INTO ProductTable VALUES('0012', 'USB6 drive', 10.99, '0011.jpg',100)",
+
+                // Create UserTable - stores all user accounts
+                "CREATE TABLE UserTable(" +
+                        "userID INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
+                        "username VARCHAR(50) UNIQUE NOT NULL," +
+                        "passwordHash VARCHAR(255) NOT NULL," +
+                        "email VARCHAR(100) NOT NULL," +
+                        "userType VARCHAR(20) NOT NULL," +
+                        "createdDate DATE DEFAULT CURRENT_DATE," +
+                        "CHECK (userType IN ('Customer', 'Staff'))" +
+                        ")",
+
+// Create CustomerTable - specific customer details
+                "CREATE TABLE CustomerTable(" +
+                        "customerID INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
+                        "userID INTEGER NOT NULL UNIQUE," +
+                        "loyaltyPoints INTEGER DEFAULT 0," +
+                        "FOREIGN KEY (userID) REFERENCES UserTable(userID) ON DELETE CASCADE" +
+                        ")",
+
+// Create StaffTable - specific staff details
+                "CREATE TABLE StaffTable(" +
+                        "staffID INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
+                        "userID INTEGER NOT NULL UNIQUE," +
+                        "role VARCHAR(50) NOT NULL," +
+                        "FOREIGN KEY (userID) REFERENCES UserTable(userID) ON DELETE CASCADE" +
+                        ")",
+
+// Insert default admin user - username: admin, password: admin123
+                "INSERT INTO UserTable (username, passwordHash, email, userType) VALUES " +
+                        "('admin', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIpgz3h5pe', 'admin@happyshop.com', 'Staff')",
+
+// Insert default customer - username: customer1, password: customer123
+                "INSERT INTO UserTable (username, passwordHash, email, userType) VALUES " +
+                        "('customer1', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYIpgz3h5pe', 'customer@email.com', 'Customer')",
+
+// Link admin to StaffTable
+                "INSERT INTO StaffTable (userID, role) VALUES (1, 'Manager')",
+
+// Link customer1 to CustomerTable
+                "INSERT INTO CustomerTable (userID, loyaltyPoints) VALUES (2, 0)",
         };
 
         try (Connection connection = DriverManager.getConnection(dbURL)) {
