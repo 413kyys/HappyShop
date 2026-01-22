@@ -6,9 +6,6 @@ import org.mindrot.jbcrypt.BCrypt;
  * Abstract base class representing all system users
  * Uses BCrypt for secure password hashing with salt
  * 12 rounds  for security/performance balance
- *
- * @author [Your Name]
- * @version 1.0
  */
 public abstract class User {
 
@@ -64,8 +61,8 @@ public abstract class User {
     public String getUsername() { return username; }
     public String getEmail() { return email; }
 
-    // Protected getter - only subclasses can access password hash
-    protected String getPasswordHash() { return passwordHash; }
+    //
+    public String getPasswordHash() { return passwordHash; }
 
     // Setter for userId (assigned by database when user is created)
     public void setUserId(int userId) { this.userId = userId; }
