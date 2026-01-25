@@ -23,10 +23,10 @@ import java.util.Map;
 public class CustomerModel {
     public CustomerView cusView;
     public DatabaseRW databaseRW; //Interface type, not specific implementation
-                                  //Benefits: Flexibility: Easily change the database implementation.
+    //Benefits: Flexibility: Easily change the database implementation.
 
-    private Product theProduct =null; // product found from search
-    private ArrayList<Product> trolley =  new ArrayList<>(); // a list of products in trolley
+    private Product theProduct = null; // product found from search
+    private ArrayList<Product> trolley = new ArrayList<>(); // a list of products in trolley
 
     // Four UI elements to be passed to CustomerView for display updates.
     private String imageName = "imageHolder.jpg";                // Image to show in product preview (Search Page)
@@ -50,12 +50,12 @@ public class CustomerModel {
                 System.out.println(displayLaSearchResult);
             }
             else{
-                theProduct=null;
+                theProduct = null;
                 displayLaSearchResult = "No Product was found with ID " + productId;
                 System.out.println("No Product was found with ID " + productId);
             }
         }else{
-            theProduct=null;
+            theProduct = null;
             displayLaSearchResult = "Please type ProductID";
             System.out.println("Please type ProductID.");
         }
@@ -63,7 +63,7 @@ public class CustomerModel {
     }
 
     void addToTrolley(){
-        if(theProduct!= null){
+        if(theProduct != null){
 
             // trolley.add(theProduct) — Product is appended to the end of the trolley.
             // To keep the trolley organized, add code here or call a method that:
@@ -77,59 +77,101 @@ public class CustomerModel {
             displayLaSearchResult = "Please search for an available product before adding it to the trolley";
             System.out.println("must search and get an available product before add to trolley");
         }
-        displayTaReceipt=""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
+        displayTaReceipt = ""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
         updateView();
     }
 
     void checkOut() throws IOException, SQLException {
-        if(!trolley.isEmpty()){
-            // Group the products in the trolley by productId to optimize stock checking
-            // Check the database for sufficient stock for all products in the trolley.
-            // If any products are insufficient, the update will be rolled back.
-            // If all products are sufficient, the database will be updated, and insufficientProducts will be empty.
-            // Note: If the trolley is already organized (merged and sorted), grouping is unnecessary.
-            ArrayList<Product> groupedTrolley= groupProductsById(trolley);
-            ArrayList<Product> insufficientProducts= databaseRW.purchaseStocks(groupedTrolley);
+        // Check if trolley is empty first
+        if(trolley.isEmpty()){
+            displayLaSearchResult = "Your trolley is empty! Add products first.";
+            updateView();
+            return;
+        }
 
-            if(insufficientProducts.isEmpty()){ // If stock is sufficient for all products
-                //get OrderHub and tell it to make a new Order
-                OrderHub orderHub =OrderHub.getOrderHub();
-                Order theOrder = orderHub.newOrder(trolley);
-                trolley.clear();
-                displayTaTrolley ="";
-                displayTaReceipt = String.format(
-                        "Order_ID: %s\nOrdered_Date_Time: %s\n%s",
-                        theOrder.getOrderId(),
-                        theOrder.getOrderedDateTime(),
-                        ProductListFormatter.buildString(theOrder.getProductList())
-                );
-                System.out.println(displayTaReceipt);
-            }
-            else{ // Some products have insufficient stock — build an error message to inform the customer
-                StringBuilder errorMsg = new StringBuilder();
-                for(Product p : insufficientProducts){
-                    errorMsg.append("\u2022 "+ p.getProductId()).append(", ")
-                            .append(p.getProductDescription()).append(" (Only ")
-                            .append(p.getStockQuantity()).append(" available, ")
-                            .append(p.getOrderedQuantity()).append(" requested)\n");
+        // Calculate total amount for payment
+        double total = 0;
+        for (Product p : trolley) {
+            total += p.getUnitPrice() * p.getOrderedQuantity();
+        }
+
+        final double finalTotal = total;
+
+        // Show payment window before processing order
+        ci553.happyshop.payment.PaymentView paymentView = new ci553.happyshop.payment.PaymentView();
+
+        paymentView.show(finalTotal, -1, (success, payment) -> {
+            if (success) {
+                // Payment was successful, now process the order
+                try {
+                    // Group the products in the trolley by productId to optimize stock checking
+                    // Check the database for sufficient stock for all products in the trolley.
+                    // If any products are insufficient, the update will be rolled back.
+                    // If all products are sufficient, the database will be updated, and insufficientProducts will be empty.
+                    ArrayList<Product> groupedTrolley = groupProductsById(trolley);
+                    ArrayList<Product> insufficientProducts = databaseRW.purchaseStocks(groupedTrolley);
+
+                    if(insufficientProducts.isEmpty()){
+                        // Stock is sufficient for all products
+                        // Get OrderHub and tell it to make a new Order
+                        OrderHub orderHub = OrderHub.getOrderHub();
+                        Order theOrder = orderHub.newOrder(trolley);
+
+                        // Play success sound
+                        ci553.happyshop.audio.SoundManager.getInstance().play(
+                                ci553.happyshop.audio.SoundEffect.ORDER_SUCCESS
+                        );
+
+                        // Clear trolley and show receipt
+                        trolley.clear();
+                        displayTaTrolley = "";
+                        displayTaReceipt = String.format(
+                                "Order_ID: %s\nOrdered_Date_Time: %s\n%s",
+                                theOrder.getOrderId(),
+                                theOrder.getOrderedDateTime(),
+                                ProductListFormatter.buildString(theOrder.getProductList())
+                        );
+                        System.out.println(displayTaReceipt);
+                        updateView();
+
+                    }
+                    else{
+                        // Some products have insufficient stock — build an error message to inform the customer
+                        StringBuilder errorMsg = new StringBuilder();
+                        for(Product p : insufficientProducts){
+                            errorMsg.append("• ").append(p.getProductId()).append(", ")
+                                    .append(p.getProductDescription()).append(" (Only ")
+                                    .append(p.getStockQuantity()).append(" available, ")
+                                    .append(p.getOrderedQuantity()).append(" requested)\n");
+                        }
+                        theProduct = null;
+
+                        //TODO
+                        // Add the following logic here:
+                        // 1. Remove products with insufficient stock from the trolley.
+                        // 2. Trigger a message window to notify the customer about the insufficient stock.
+                        displayLaSearchResult = "Checkout failed due to insufficient stock for the following products:\n" + errorMsg.toString();
+                        System.out.println("stock is not enough");
+                        updateView();
+
+                        // Play error sound
+                        ci553.happyshop.audio.SoundManager.getInstance().play(
+                                ci553.happyshop.audio.SoundEffect.ERROR
+                        );
+                    }
+                } catch (Exception e) {
+                    displayLaSearchResult = "Error processing order: " + e.getMessage();
+                    updateView();
+                    ci553.happyshop.audio.SoundManager.getInstance().play(
+                            ci553.happyshop.audio.SoundEffect.ERROR
+                    );
                 }
-                theProduct=null;
-
-                //TODO
-                // Add the following logic here:
-                // 1. Remove products with insufficient stock from the trolley.
-                // 2. Trigger a message window to notify the customer about the insufficient stock, rather than directly changing displayLaSearchResult.
-                //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
-                //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
-                displayLaSearchResult = "Checkout failed due to insufficient stock for the following products:\n" + errorMsg.toString();
-                System.out.println("stock is not enough");
+            } else {
+                // Payment was cancelled by user
+                displayLaSearchResult = "Payment cancelled";
+                updateView();
             }
-        }
-        else{
-            displayTaTrolley = "Your trolley is empty";
-            System.out.println("Your trolley is empty");
-        }
-        updateView();
+        });
     }
 
     /**
@@ -145,8 +187,8 @@ public class CustomerModel {
                 existing.setOrderedQuantity(existing.getOrderedQuantity() + p.getOrderedQuantity());
             } else {
                 // Make a shallow copy to avoid modifying the original
-                grouped.put(id,new Product(p.getProductId(),p.getProductDescription(),
-                        p.getProductImageName(),p.getUnitPrice(),p.getStockQuantity()));
+                grouped.put(id, new Product(p.getProductId(), p.getProductDescription(),
+                        p.getProductImageName(), p.getUnitPrice(), p.getStockQuantity()));
             }
         }
         return new ArrayList<>(grouped.values());
@@ -154,17 +196,18 @@ public class CustomerModel {
 
     void cancel(){
         trolley.clear();
-        displayTaTrolley="";
+        displayTaTrolley = "";
         updateView();
     }
+
     void closeReceipt(){
-        displayTaReceipt="";
+        displayTaReceipt = "";
     }
 
     void updateView() {
         if(theProduct != null){
             imageName = theProduct.getProductImageName();
-            String relativeImageUrl = StorageLocation.imageFolder +imageName; //relative file path, eg images/0001.jpg
+            String relativeImageUrl = StorageLocation.imageFolder + imageName; //relative file path, eg images/0001.jpg
             // Get the full absolute path to the image
             Path imageFullPath = Paths.get(relativeImageUrl).toAbsolutePath();
             imageName = imageFullPath.toUri().toString(); //get the image full Uri then convert to String
@@ -173,11 +216,11 @@ public class CustomerModel {
         else{
             imageName = "imageHolder.jpg";
         }
-        cusView.update(imageName, displayLaSearchResult, displayTaTrolley,displayTaReceipt);
+        cusView.update(imageName, displayLaSearchResult, displayTaTrolley, displayTaReceipt);
     }
-     // extra notes:
-     //Path.toUri(): Converts a Path object (a file or a directory path) to a URI object.
-     //File.toURI(): Converts a File object (a file on the filesystem) to a URI object
+    // extra notes:
+    //Path.toUri(): Converts a Path object (a file or a directory path) to a URI object.
+    //File.toURI(): Converts a File object (a file on the filesystem) to a URI object
 
     //for test only
     public ArrayList<Product> getTrolley() {
