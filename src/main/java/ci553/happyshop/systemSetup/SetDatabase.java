@@ -35,7 +35,7 @@ public class SetDatabase {
     private static Path imageWorkingFolderPath = StorageLocation.imageFolderPath;
     private static Path imageBackupFolderPath = StorageLocation.imageResetFolderPath;
 
-    private String[] tables = {"ProductTable", "UserTable", "CustomerTable", "StaffTable"};
+    private String[] tables = {"ProductTable", "TransactionTable", "CustomerTable", "StaffTable", "UserTable"};
     // Currently only "ProductTable" exists, but using an array allows easy expansion
     // if more tables need to be processed in the future without changing the logic structure.
 
@@ -143,6 +143,20 @@ public class SetDatabase {
 
 // Link customer1 to CustomerTable
                 "INSERT INTO CustomerTable (userID, loyaltyPoints) VALUES (2, 0)",
+
+                // TransactionTable stores payment records
+// Links each order to its payment details for audit trail
+                "CREATE TABLE TransactionTable(" +
+                        "transactionID INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +  // auto-incrementing ID
+                        "orderID INTEGER NOT NULL," +  // which order this payment is for
+                        "paymentMethod VARCHAR(20) NOT NULL," +  // CreditCard, DebitCard, or PayPal
+                        "amount DOUBLE NOT NULL," +  // total payment amount
+                        "transactionDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +  // when payment happened
+                        "status VARCHAR(20) DEFAULT 'Completed'," +  // Pending/Completed/Failed/Refunded
+                        "cardLastFour CHAR(4)," +  // last 4 digits of card (for display purposes only)
+                        "CHECK (paymentMethod IN ('CreditCard', 'DebitCard', 'PayPal'))," +  // only allow these methods
+                        "CHECK (status IN ('Pending', 'Completed', 'Failed', 'Refunded'))" +  // only allow these statuses
+                        ")",
         };
 
         try (Connection connection = DriverManager.getConnection(dbURL)) {
