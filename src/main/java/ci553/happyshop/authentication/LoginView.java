@@ -147,6 +147,11 @@ public class LoginView {
             boolean success = authManager.login(username, password);
 
             if (success) {
+
+                // Play success sound
+                ci553.happyshop.audio.SoundManager.getInstance().play(
+                        ci553.happyshop.audio.SoundEffect.LOGIN_SUCCESS
+                );
                 errorLabel.setVisible(false);
                 User user = authManager.getCurrentUser();
 

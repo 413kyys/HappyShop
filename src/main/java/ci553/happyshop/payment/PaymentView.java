@@ -166,6 +166,11 @@ public class PaymentView {
             boolean success = payment.process();
 
             if (success) {
+                // Play payment success sound
+                ci553.happyshop.audio.SoundManager.getInstance().play(
+                        ci553.happyshop.audio.SoundEffect.PAYMENT_SUCCESS
+                );
+
                 // Save transaction to database
                 try {
                     Connection connection = DriverManager.getConnection(DatabaseRWFactory.dbURL);
