@@ -46,6 +46,9 @@ public class PickerView  {
         vbOrderMapRoot = createOrderMapRoot();
         vbOrderDetailRoot = createOrderDetailRoot();
         scene = new Scene(vbOrderMapRoot, WIDTH, HEIGHT);
+        scene.getStylesheets().add(
+                getClass().getResource("/styles/theme.css").toExternalForm()
+        );
         window.setScene(scene);
         window.setTitle("🛒 HappyShop Order Picker");
         WinPosManager.registerWindow(window,WIDTH,HEIGHT); //calculate position x and y for this window

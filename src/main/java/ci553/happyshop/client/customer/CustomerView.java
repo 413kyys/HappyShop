@@ -68,6 +68,10 @@ public class CustomerView  {
         hbRoot.setStyle(UIStyle.rootStyle);
 
         Scene scene = new Scene(hbRoot, WIDTH, HEIGHT);
+        // Apply modern theme CSS
+        scene.getStylesheets().add(
+                getClass().getResource("/styles/theme.css").toExternalForm()
+        );
         window.setScene(scene);
         window.setTitle("🛒 HappyShop Customer Client");
         WinPosManager.registerWindow(window,WIDTH,HEIGHT); //calculate position x and y for this window
