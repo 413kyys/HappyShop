@@ -161,6 +161,10 @@ public class CustomerModel {
                     }
                 } catch (Exception e) {
                     displayLaSearchResult = "Error processing order: " + e.getMessage();
+                    System.err.println("❌ ORDER CREATION ERROR:");
+                    System.err.println("Error type: " + e.getClass().getName());
+                    System.err.println("Error message: " + e.getMessage());
+                    e.printStackTrace();
                     updateView();
                     ci553.happyshop.audio.SoundManager.getInstance().play(
                             ci553.happyshop.audio.SoundEffect.ERROR

@@ -232,7 +232,14 @@ public class PaymentView {
                 buttonBox
         );
 
-        Scene scene = new Scene(root, 500, 600);
+        // Wrap root in ScrollPane so all content is accessible
+        ScrollPane scrollPane = new ScrollPane(root);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("-fx-background-color: #f9fafb;");
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        Scene scene = new Scene(scrollPane, 450, 600);
         stage.setScene(scene);
         stage.show();
     }
