@@ -48,25 +48,29 @@ public class Main extends Application {
         LoginView loginView = new LoginView();
         Stage loginStage = new Stage();
         loginView.start(loginStage, user -> {
-            System.out.println("Logged in as: " + user.getUsername() + " (" + user.getUserType() + ")");
+            System.out.println("✅ Logged in as: " + user.getUsername() + " (" + user.getUserType() + ")");
 
             try {
-                startCustomerClient();
-                startPickerClient();
-                startOrderTracker();
-
-                startCustomerClient();
-                startPickerClient();
-                startOrderTracker();
-
-                // Initialize order map
+                // Initialize order map first (needed for all users)
                 initializeOrderMap();
 
-                startWarehouseClient();
-                startWarehouseClient();
+                // Open windows based on user type
+                if (user.getUserType().equals("Customer")) {
+                    // Customer only sees customer window
+                    startCustomerClient();
+                    System.out.println("Customer window opened");
 
-                startEmergencyExit();
+                } else if (user.getUserType().equals("Staff")) {
+                    // Staff sees warehouse, picker, tracker windows
+                    startWarehouseClient();
+                    startPickerClient();
+                    startOrderTracker();
+                    startEmergencyExit();
+                    System.out.println("Staff windows opened (Warehouse, Picker, Tracker)");
+                }
+
             } catch (Exception e) {
+                System.err.println("Error opening windows: " + e.getMessage());
                 e.printStackTrace();
             }
         });
