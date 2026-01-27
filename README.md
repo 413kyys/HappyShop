@@ -1,22 +1,25 @@
 # HappyShop 2.0 - E-Commerce System
 
-This is my enhanced version of the HappyShop project. I've added proper user authentication, payment processing, better UI styling, and sound effects.
+Enhanced version of the HappyShop project with user authentication, payment processing, modern UI styling, and sound effects.
 
-## What I Added:
+## What I Added
 
-- **Login System**: Users need to log in now with hashed passwords (using BCrypt)
-- **Payment System**: Customers can pay with credit/debit cards or PayPal before checkout
-- **Better UI**: Changed from the bright green/pink colours to a proper blue and white theme
-- **Sound Effects**: Plays sounds when you login, complete orders, or get errors
-- **Database Updates**: Everything saves to the database now including payments
+* **Login System:** Secure authentication with BCrypt password hashing
+* **Payment System:** Credit/Debit card and PayPal support with Luhn algorithm validation
+* **Modern UI:** Professional blue and white theme with CSS styling
+* **Sound Effects:** Audio feedback for login, orders, and errors
+* **Order Management:** Real-time order tracking and processing
+* **Database Integration:** Complete persistence with Apache Derby
 
 ## Running the Project
 
-You need Java 21 and Maven installed.
+**Requirements:**
+- Java 21
+- Maven
 
-### Setup Steps
+**Setup Steps:**
 
-1. Clone from GitHub:
+1. Clone the repository:
 ```bash
 git clone https://github.com/413kyys/HappyShop.git
 cd HappyShop
@@ -26,48 +29,135 @@ cd HappyShop
 ```bash
 mvn compile
 ```
-Then run `SetDatabase.java` to create all the tables.
+Then run `SetDatabase.java` to create all tables.
 
 3. Start the application:
 ```bash
 mvn javafx:run
 ```
 
-## Login Details
+Or run `Launcher.java` directly from IntelliJ.
 
-I created these default users you can test with:
-- Admin: `admin` / `admin123`
-- Customer: `customer1` / `customer123`
+## Login Credentials
 
-## Testing Payments
+The system has two user types with different access levels:
 
-Use this test card: `4532015112830366`
+### Customer Account
+- **Username:** `customer1`
+- **Password:** `customer123`
+- **Access:** Shopping interface only
+- **Features:** Search products, add to basket, checkout with payment
+
+### Staff Account
+- **Username:** `admin`
+- **Password:** `admin123`
+- **Access:** All management interfaces
+- **Features:** Warehouse management, order processing, order tracking, system controls
+
+## User Interface by Role
+
+### Customer View (1 window)
+When logged in as a customer, you get the shopping interface where you can:
+- Search products by ID
+- Add items to trolley
+- Complete checkout with payment
+- View order receipts
+
+### Staff View (4 windows)
+When logged in as staff (admin), you get access to:
+1. **Warehouse Window:** Manage inventory, add/edit/delete products, update stock levels
+2. **Picker Window:** Process customer orders, mark orders as progressing/collected
+3. **Order Tracker:** Monitor all orders in real-time
+4. **Emergency Exit:** System shutdown control
+
+## Testing the Payment System
+
+Use these test credentials for payment:
+
+**Test Card Number:** `4532015112830366`
 - Expiry: `12/25`
 - CVV: `123`
 
-It's a valid test number for checking the payment system works.
+This is a valid test number that passes Luhn algorithm validation.
 
-## How It's Built
+## Technical Implementation
 
-I used several design patterns:
-- MVC for separating the interface from logic
-- DAO pattern for database access
-- Singleton for things like AuthenticationManager
-- Strategy pattern for the different payment types
+### Design Patterns Used:
+- **MVC Pattern:** Separates UI, logic, and data across all client interfaces
+- **DAO Pattern:** Encapsulates database access (UserDAO, TransactionDAO, ProductDAO)
+- **Singleton Pattern:** AuthenticationManager, OrderHub, SoundManager
+- **Strategy Pattern:** Different payment types (CardPayment, PayPalPayment)
+- **Observer Pattern:** OrderHub notifies Picker and Tracker of order changes
 
-## Database Tables
+### Database Schema:
+- **UserTable:** Stores all users with hashed passwords
+- **CustomerTable:** Customer-specific data (loyalty points)
+- **StaffTable:** Staff-specific data (roles)
+- **ProductTable:** Product inventory
+- **TransactionTable:** Payment records with timestamps
 
-- UserTable, CustomerTable, StaffTable - for login and users
-- ProductTable - for the products
-- TransactionTable - records all payments
+### Technologies:
+- Java 21
+- JavaFX 21.0.7
+- Apache Derby 10.16.1.1
+- BCrypt 0.4
+- Maven
 
-## Technologies Used
+## Project Structure
+```
+HappyShop/
+├── src/main/java/ci553/happyshop/
+│   ├── authentication/     # Login, user management
+│   ├── payment/           # Payment processing, Luhn validation
+│   ├── client/            # All UI views (Customer, Warehouse, Picker, Tracker)
+│   ├── storageAccess/     # Database DAOs and connection
+│   ├── orderManagement/   # Order creation and tracking
+│   ├── audio/             # Sound effects manager
+│   └── catalogue/         # Product and order models
+├── src/main/resources/
+│   ├── styles/            # CSS theme files
+│   ├── sounds/            # Audio files (.wav)
+│   └── images/            # Product images
+├── orders/                # Order file storage
+│   ├── ordered/           # New orders
+│   ├── progressing/       # Orders being processed
+│   └── collected/         # Completed orders
+├── happyShopDB/          # Apache Derby database
+└── README.md
+```
 
-- JavaFX 21
-- Apache Derby database
-- BCrypt for password security
-- Maven for dependencies
+## Key Features
+
+### Authentication System
+- Secure password hashing with BCrypt (12 rounds)
+- Role-based access control (Customer vs Staff)
+- Session management with Singleton AuthenticationManager
+
+### Payment Processing
+- Multiple payment methods (Credit Card, Debit Card, PayPal)
+- Luhn algorithm validation for card numbers
+- Transaction recording in database
+- Sound feedback on success/failure
+
+### Order Management
+- File-based order storage with state tracking
+- Real-time updates to Picker and Tracker windows
+- Automatic order lifecycle management
+- 10-second cleanup for collected orders
+
+### User Interface
+- Modern CSS styling with professional color scheme
+- Responsive layouts with JavaFX
+- Consistent theme across all windows
+- Loading indicators and visual feedback
 
 ## Author
 
-Kristal Alem - University of Brighton - CI553 Object Oriented Development and Testing
+**Kristal Alem**  
+University of Brighton  
+CI553 Object-Oriented Development and Testing  
+January 2026
+
+## Repository
+
+GitHub: https://github.com/413kyys/HappyShop
