@@ -46,6 +46,7 @@ public class LoginView {
 
         // Title
         Label titleLabel = new Label("HappyShop Login");
+        titleLabel.getStyleClass().add("label-title");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
         titleLabel.setTextFill(Color.web("#2563eb"));
 
@@ -191,6 +192,7 @@ public class LoginView {
 
         // Create scene and show
         Scene scene = new Scene(root, 600, 500);
+        scene.getStylesheets().add(getClass().getResource("/styles/theme.css").toExternalForm());
         stage.setTitle("HappyShop - Login");
         stage.setScene(scene);
         stage.setResizable(false);

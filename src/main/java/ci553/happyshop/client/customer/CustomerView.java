@@ -69,6 +69,7 @@ public class CustomerView  {
 
         Scene scene = new Scene(hbRoot, WIDTH, HEIGHT);
         // Apply modern theme CSS
+        scene.getStylesheets().add(getClass().getResource("/styles/theme.css").toExternalForm());
         scene.getStylesheets().add(
                 getClass().getResource("/styles/theme.css").toExternalForm()
         );

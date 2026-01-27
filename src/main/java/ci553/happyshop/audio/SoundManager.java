@@ -62,7 +62,8 @@ public class SoundManager {
                     try {
                         Thread.sleep(100);
                         Toolkit.getDefaultToolkit().beep();
-                    } catch (InterruptedException e) {}
+                    } catch (InterruptedException e) {
+                    }
                 }).start();
                 break;
 
@@ -74,7 +75,8 @@ public class SoundManager {
                         try {
                             Thread.sleep(count * 100);
                             Toolkit.getDefaultToolkit().beep();
-                        } catch (InterruptedException e) {}
+                        } catch (InterruptedException e) {
+                        }
                     }).start();
                 }
                 break;
@@ -103,3 +105,4 @@ public class SoundManager {
     public boolean isSoundEnabled() {
         return soundEnabled;
     }
+}
