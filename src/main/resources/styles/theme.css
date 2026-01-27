@@ -1,31 +1,14 @@
-/* HappyShop Modern Theme
- * professional e-commerce colour scheme
- * blue primary,green accents and clean grey
- */
+/* HappyShop Modern Theme, JavaFX Compatible */
 
-/* (easy to change colours throughout app) */
+/* Main window styling */
 .root {
-    -fx-primary: #2563eb;        /* Professional blue */
-    -fx-primary-dark: #1d4ed8;   /* Darker blue for hover */
-    -fx-success: #10b981;        /* Success green */
-    -fx-danger: #ef4444;         /* Error red */
-    -fx-warning: #f59e0b;        /* Warning orange */
-    -fx-background: #f9fafb;     /* Light grey background */
-    -fx-surface: #ffffff;        /* White surfaces */
-    -fx-text: #1f2937;           /* Dark grey text */
-    -fx-text-secondary: #6b7280; /* Secondary text */
-    -fx-border: #d1d5db;         /* Border colour */
-}
-
-/* main window styling */
-.root {
-    -fx-background-color: -fx-background;
+    -fx-background-color: #f9fafb;
     -fx-font-family: "Arial";
 }
 
-/* buttons: modern flat design with hover effect */
+/* Buttons, modern flat design with hover effect */
 .button {
-    -fx-background-color: -fx-primary;
+    -fx-background-color: #2563eb;
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-padding: 10 20 10 20;
@@ -35,37 +18,37 @@
 }
 
 .button:hover {
-    -fx-background-color: -fx-primary-dark;
+    -fx-background-color: #1d4ed8;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);
 }
 
 .button:pressed {
-    -fx-background-color: derive(-fx-primary, -20%);
+    -fx-background-color: #1e40af;
     -fx-effect: none;
 }
 
 /* Success button variant */
 .button-success {
-    -fx-background-color: -fx-success;
+    -fx-background-color: #10b981;
 }
 
 .button-success:hover {
-    -fx-background-color: derive(-fx-success, -10%);
+    -fx-background-color: #059669;
 }
 
 /* Danger button variant */
 .button-danger {
-    -fx-background-color: -fx-danger;
+    -fx-background-color: #ef4444;
 }
 
 .button-danger:hover {
-    -fx-background-color: derive(-fx-danger, -10%);
+    -fx-background-color: #dc2626;
 }
 
-/* Text fields - clean borders, focus effect */
+/* Text fields, clean borders, focus effect */
 .text-field, .text-area {
     -fx-background-color: white;
-    -fx-border-color: -fx-border;
+    -fx-border-color: #d1d5db;
     -fx-border-radius: 6;
     -fx-background-radius: 6;
     -fx-padding: 8;
@@ -73,21 +56,21 @@
 }
 
 .text-field:focused, .text-area:focused {
-    -fx-border-color: -fx-primary;
+    -fx-border-color: #2563eb;
     -fx-border-width: 2;
     -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.2), 5, 0, 0, 0);
 }
 
-/* Labels - hierarchy with different sizes */
+/* Labels, hierarchy with different sizes */
 .label {
-    -fx-text-fill: -fx-text;
+    -fx-text-fill: #1f2937;
     -fx-font-size: 14px;
 }
 
 .label-title {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: -fx-primary;
+    -fx-text-fill: #2563eb;
 }
 
 .label-heading {
@@ -96,14 +79,14 @@
 }
 
 .label-secondary {
-    -fx-text-fill: -fx-text-secondary;
+    -fx-text-fill: #6b7280;
     -fx-font-size: 12px;
 }
 
-/* Tables - clean lines, hover effect on rows */
+/* Tables, clean lines, hover effect on rows */
 .table-view {
     -fx-background-color: white;
-    -fx-border-color: -fx-border;
+    -fx-border-color: #d1d5db;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
 }
@@ -114,18 +97,18 @@
 }
 
 .table-row-cell:hover {
-    -fx-background-color: #f0f9ff;  /* Light blue on hover */
+    -fx-background-color: #f0f9ff;
 }
 
 .table-row-cell:selected {
     -fx-background-color: #dbeafe;
-    -fx-text-fill: -fx-text;
+    -fx-text-fill: #1f2937;
 }
 
 /* List views */
 .list-view {
     -fx-background-color: white;
-    -fx-border-color: -fx-border;
+    -fx-border-color: #d1d5db;
     -fx-border-radius: 8;
 }
 
@@ -134,7 +117,7 @@
 }
 
 .list-cell:selected {
-    -fx-background-color: -fx-primary;
+    -fx-background-color: #2563eb;
     -fx-text-fill: white;
 }
 
@@ -154,9 +137,20 @@
 
 /* Tooltips */
 .tooltip {
-    -fx-background-color: -fx-text;
+    -fx-background-color: #1f2937;
     -fx-text-fill: white;
     -fx-font-size: 12px;
     -fx-padding: 6;
     -fx-background-radius: 4;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 6;
+}
+
+.combo-box:focused {
+    -fx-border-color: #2563eb;
 }
